@@ -1,0 +1,63 @@
+env:
+  REGISTRY: ghcr.io
+  DOCKER_BUILD_RECORD_UPLOAD: false
+
+on:
+  push:
+    branches:
+      - kelsin/root
+
+name: Docker
+jobs:
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Meta
+        id: meta
+        uses: docker/metadata-action@v5
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: index
+        with:
+          images: ${{ env.REGISTRY }}/kelsin/hrf
+          flavor: latest=true
+          labels: |
+            org.opencontainers.image.title=kelsin/hrf
+          annotations: |
+            org.opencontainers.image.title=kelsin/hrf
+          tags: |
+            type=sha
+            type=ref,event=branch
+      - name: Build
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          annotations: ${{ steps.meta.outputs.annotations }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        id: attest
+        with:
+          push-to-registry: true
+          subject-digest: ${{ steps.build.outputs.digest }}
+          subject-name: ${{ env.REGISTRY }}/kelsin/hrf

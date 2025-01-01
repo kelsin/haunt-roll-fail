@@ -497,20 +497,11 @@
 
         <!-- { | SCRIPT | { -->
         <script id="load-hrf-version">
-            const code = "........";
-
-            const js = document.createElement("script");
-            js.crossorigin = "use-credentials";
-            js.id = "script";
-
-            const version = (window.location.search + "&version=").split("version=")[1].split("&")[0];
-
-            const load = (v) => {
-                js.src = "./target/scala-2.13/hrf-fastopt" + ((v == "") ? "" : "-" + v) + ".js?" + code;
-                document.head.appendChild(js);
-            }
-
-            load(version);
+          const js = document.createElement("script");
+          js.crossorigin = "use-credentials";
+          js.id = "script";
+          js.src = "./main.js";
+          document.head.appendChild(js);
         </script>
         <!-- } | SCRIPT | } -->
 
