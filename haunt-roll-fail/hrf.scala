@@ -76,17 +76,18 @@ object HRF {
         root.Meta -> root.UI ::
         root.MetaAdset -> root.UI ::
         root.MetaMirror -> root.UI ::
-        cthw.Meta -> cthw.UI ::
-        dwam.Meta -> dwam.UI ::
-        vast.Meta -> vast.UI ::
-        arcs.Meta -> arcs.UI ::
-        coup.Meta -> coup.UI ::
-        sehi.Meta -> sehi.UI ::
-        suok.Meta -> suok.UI ::
-        yarg.Meta -> yarg.UI ::
+        // cthw.Meta -> cthw.UI ::
+        // dwam.Meta -> dwam.UI ::
+        // vast.Meta -> vast.UI ::
+        // arcs.Meta -> arcs.UI ::
+        // coup.Meta -> coup.UI ::
+        // sehi.Meta -> sehi.UI ::
+        // suok.Meta -> suok.UI ::
+        // yarg.Meta -> yarg.UI ::
     $
 
-    val metas = metaUIs.lefts.%(_.path != "root" || HRF.param("lobby").any || offline)
+    // val metas = metaUIs.lefts.%(_.path != "root" || HRF.param("lobby").any || offline)
+    val metas = metaUIs.lefts.%(_.path == "root" || HRF.param("lobby").any || offline)
 
     val html = dom.window.location.origin + "/play/"
     val script = dom.document.getElementById("script").asInstanceOf[dom.html.Script].src
