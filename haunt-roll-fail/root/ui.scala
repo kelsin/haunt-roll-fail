@@ -283,11 +283,20 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, options : $[Meta.O], val
     var deadmp : Bitmap = null
 
     def drawMap() {
-        if (resources.images.get(mapid + "map").complete.not)
+        // If assets are not yet loaded, schedule a redraw soon instead of returning forever
+        if (resources.images.get(mapid + "map").complete.not || resources.images.get(mapid + "map-regions").complete.not) {
+            resources.images.incomplete = $
+            setTimeout(200)(drawMap())
             return
+        }
 
-        if (resources.images.get(mapid + "map-regions").complete.not)
+        // Guard against first-layout 0x0 container; try again shortly
+        val cw = map.node.clientWidth
+        val ch = map.node.clientHeight
+        if (cw == 0 || ch == 0) {
+            setTimeout(50)(drawMap())
             return
+        }
 
         val bitmap = {
             val width = map.node.clientWidth * dom.window.devicePixelRatio
