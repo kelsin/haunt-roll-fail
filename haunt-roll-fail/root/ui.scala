@@ -425,8 +425,11 @@ class UI(val uir : ElementAttachmentPoint, arity : Int, options : $[Meta.O], val
             g.drawImage(mp, 0, 0)
 
         game.rubble.foreach { case (from, to) =>
-            val pp = $("rubble-" + from.name + "-" + to.name, "rubble-" + to.name + "-" + from.name)
-            pp.%(resources.images.has).take(1)./(p => g.drawImage(resources.images.get(p), 0, 0))
+            val pp = $(mapid + "rubble-" + from.name.toLowerCase + "-" + to.name.toLowerCase, mapid + "rubble-" + to.name.toLowerCase + "-" + from.name.toLowerCase)
+            val found = pp.%(resources.images.has).take(1)
+            found./(p => {
+                g.drawImage(resources.images.get(p), 0, 0)
+            })
         }
 
         if (highlight.any) {
